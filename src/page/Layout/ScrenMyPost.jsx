@@ -1,76 +1,92 @@
+
+import { useQuery } from '@tanstack/react-query'
 import React, { useState } from 'react'
-import adm from '../../axiosApiAuth'
+import { AiOutlineBars } from 'react-icons/ai'
+import { CgProfile } from 'react-icons/cg'
+import { FaHome } from 'react-icons/fa'
+import { MdPostAdd } from 'react-icons/md'
+import axios from 'axios'
 
 const ScrenMyPost = () => {
     const [tab, setTab] = useState("Home")
+    const [openModal, SetOpenModal] = useState(false)
 
-    const buttonTabBar = [
-        {id : '1', title : "Home"},
-        {id : '2', title : "MyPost"},
-        {id : '3', title : "Profile"}
+    const buttonTab = [
+        { id: "1", title: "Home", icon : <FaHome size={30} /> },
+        { id: "2", title: "MyPost", icon : <MdPostAdd size={30} />},
+        { id: "3", title: "Profile", icon : <CgProfile  size={30}/>}
     ]
 
-    const createPost = async ( data) => {
-        try {
-            const api = await adm.post(`http://localhost:7777/api/post/crete`, data)
-            console.info(api)
-        } catch (error) {
-            console.error(error)
-        }
-    } 
+    const { data, error, refetch } = useQuery({
+        queryKey : ['getPost'],
+        queryFn : async () => {
+            try {
+                const dataApi = await axios.get("http://localhost:7777/api/post/getAll")
+                console.info(dataApi)
+                return dataApi.data
+            } catch (error) {
+                console.error(error)
+                return []
+            }
+            
+        }   
+    })
 
-
-    const formCreate = (e) => {
-        e.preventDefault()
-
-        let judul = e.target.judul.value
-        let description = e.target.description.value
-
-        const dataPost = { judul, description }
-
-        createPost(dataPost)
-    }
+    console.info(data)
 
   return (
-    <div className='w-screen h-screen bg-slate-100 relative ' >
-        <h1 className='ml-5' >My Post App</h1>        
+    <div className='w-screen h-screen relative bg-slate-100 ' >
         <div className='flex-1 w-full h-full' >
-        {
-            tab === "Home" && (
-                <div className='' >
-                    <form onSubmit={formCreate} className='flex flex-col h-auto shadow-xl bg-white mx-2 pb-5 rounded-md px-5 gap-5 mt-3 ' >
-                    <h1 className='w-full text-center' >Create Post</h1>
-                        <label className='w-full   ' htmlFor="judul">Judul
-                            <input className='w-full border py-2 px-3 rounded-md '  type="text" id='judul' placeholder='enter the post title' />
-                        </label>
-                        <label className='w-full ' htmlFor="description">description
-                            <input className='w-full border py-2 px-3 rounded-md  ' type="text" id='description' placeholder='enter the post title' />
-                        </label>
-                        <button type='submit' className='bg-blue-500 text-white py-2 rounded-md' >Post</button>
-                    </form>
-                </div>
-            )
-        }
-        {
-            tab === "MyPost" && (
-                <div>
-                <h1>MyPost</h1>
-            </div>
-            )
-        }
-        {
-            tab === "Profile" && (
-                <div>
-                <h1>Profile</h1>
-            </div>
-            )
-        }
-        </div>
-
-        <div className='h-14 w-full bg-red-500 flex-1 flex justify-between px-5 ' >
             {
-                buttonTabBar.map((e) => (
-                        <button key={e.id} onClick={() => setTab(e.title)} className={`flex-1 ${buttonTabBar === "Home" && buttonTabBar === "Home" ? "border-r" : null}`} >{e.title}</button>
+                tab === "Home" && (
+                    <div className='flex gap-5 flex-col items-center' >
+                        <h1>Post Screen</h1>
+                        <div className='flex flex-col gap-10 h-[760px] w-full overflow-y-auto items-center justify-center ' >
+                        {
+                            data?.apiGetAll?.map((e) => (
+                                <div key={e.id} className='w-[90%] px-3 bg-white gap-5 flex flex-col relative shadow-lg h-auto pb-6 rounded-md ' >
+                                    <h1 className='mt-6 text-xl font-bold text-gray-600' >{e.judul}</h1>
+                                    <h1 className='text-gray-500' >{e.description} </h1>
+                                    <span className='flex w-full mt-4 text-gray-500  justify-between' >
+                                        <h1>{e.author}</h1>
+                                        <h1>{new Date(e.createAt).toLocaleDateString()}</h1>
+                                    </span>
+                                <AiOutlineBars onClick={() => SetOpenModal(prev => !prev)}  className={`absolute top-3 right-2 ${openModal ? "hidden" : "block"} `} />
+                                <span onClick={() => SetOpenModal(prev = !prev)} className={`flex flex-col absolute top-3 right-4 bg-white ${openModal ? "block" : 'hidden' } `} >
+                                    <button onClick={() => SetOpenModal(prev => !prev)} className='text-blue-500' >Edit</button>
+                                    <button onClick={() => SetOpenModal(prev => !prev)} className='text-red-500' >Delete</button>
+                                </span>
+                                    <button onClick={() => SetOpenModal(prev => !prev)} className={`absolute top-0 right-1  text-2xl w-2 h-2 text-red-500 ${openModal ? "block" : "hidden"}`} >x</button>
+                                </div>
+                            ))
+                        }
+                        </div>
+                    </div>
+                )
+            }
+            {
+                tab === "MyPost" && (
+                    <div>
+                        ini MyPost
+                    </div>
+                )
+            }
+            {
+                tab === "Profile" && (
+                    <div>
+                        ini Profile 
+                    </div>
+                )
+            }
+        </div>
+        <div className='flex-1 h-16 absolute bottom-0 bg-blue-500 w-full flex justify-around' >
+            {
+                buttonTab.map((e) => (
+                    <button onClick={() => setTab(e.title)} key={e.id} className='flex text-white flex-col items-center justify-center pt-2 gap-2' >
+                        {e.icon}
+                        { e.title}
+                    </button>
+  <button key={e.id} onClick={() => setTab(e.title)} className={`flex-1 ${buttonTabBar === "Home" && buttonTabBar === "Home" ? "border-r" : null}`} >{e.title}</button>
                 ))
             }
         </div>

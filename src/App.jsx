@@ -42,6 +42,7 @@ const App = () => {
 
   return (
     <Routes>
+      <Route path='/' element={<ScrenMyPost/>} />
       <Route path='/layout' element={<ScrenMyPost/>} >
       </Route>
     </Routes>

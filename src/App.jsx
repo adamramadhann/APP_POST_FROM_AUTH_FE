@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes, useNavigate } from 'react-router-dom'
 import Home from './page/Auth/Home'
 import Login from './page/Auth/Login'
 import Register from './page/Auth/Register'
@@ -10,6 +10,7 @@ import ScrenMyPost from './page/Layout/ScrenMyPost'
 const App = () => {
 
   const [isLogin, setIsLogin] = useState(false)
+  const navigate = useNavigate()
 
   const token = getTokenStorage()
 
@@ -17,7 +18,14 @@ const App = () => {
     if(token) {
       setIsLogin(true)
     }
-  }, [])
+  }, [token])
+
+  useEffect(() => {
+    if(token ) {
+      navigate('/layout')
+    }
+  }, [isLogin, navigate])
+
 
   console.info(token)
 
@@ -35,6 +43,8 @@ const App = () => {
   return (
     <Routes>
       <Route path='/' element={<ScrenMyPost/>} />
+      <Route path='/layout' element={<ScrenMyPost/>} >
+      </Route>
     </Routes>
   )
 }

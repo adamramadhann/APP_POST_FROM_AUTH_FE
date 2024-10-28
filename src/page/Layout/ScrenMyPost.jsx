@@ -1,3 +1,4 @@
+
 import { useQuery } from '@tanstack/react-query'
 import React, { useState } from 'react'
 import { AiOutlineBars } from 'react-icons/ai'
@@ -85,6 +86,7 @@ const ScrenMyPost = () => {
                         {e.icon}
                         { e.title}
                     </button>
+  <button key={e.id} onClick={() => setTab(e.title)} className={`flex-1 ${buttonTabBar === "Home" && buttonTabBar === "Home" ? "border-r" : null}`} >{e.title}</button>
                 ))
             }
         </div>

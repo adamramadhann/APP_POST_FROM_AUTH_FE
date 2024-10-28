@@ -5,6 +5,7 @@ import Login from './page/Auth/Login'
 import Register from './page/Auth/Register'
 import TestApiJson from './TestApiJson'
 import getTokenStorage from './GetTokenStorage'
+import ScrenMyPost from './page/Layout/ScrenMyPost'
 
 const App = () => {
 
@@ -33,8 +34,7 @@ const App = () => {
 
   return (
     <Routes>
-      <Route index element={<h1>Login Berhasil</h1>} >
-      </Route>
+      <Route path='/' element={<ScrenMyPost/>} />
     </Routes>
   )
 }

@@ -5,13 +5,14 @@
     })
 
     adm.interceptors.request.use(
-        (getToken) => {
+        (config) => {
             const token = sessionStorage.getItem("token")
 
             if(token) {
-                getToken.headers["authorization"] = `beaer ${token}`
+                config.headers["authorization"] = `Bearer ${token}`
             }
-            return getToken
+            config.headers["Content-Type"] = "application/json"; 
+            return config
         },
         (error) => {
             return Promise.reject(error)

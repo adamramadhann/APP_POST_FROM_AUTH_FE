@@ -6,10 +6,15 @@ import { CgProfile } from 'react-icons/cg'
 import { FaHome } from 'react-icons/fa'
 import { MdPostAdd } from 'react-icons/md'
 import axios from 'axios'
+import adm from '../../axiosApiAuth'
 
 const ScrenMyPost = () => {
     const [tab, setTab] = useState("Home")
     const [openModal, SetOpenModal] = useState(null)
+    const [openModalEdit, setOpenModalEdit] = useState(null)
+    const [judul, setJudul] = useState('')
+    const [description, setDescription] = useState('')
+
 
     const buttonTab = [
         { id: "1", title: "Home", icon : <FaHome size={30} /> },
@@ -30,12 +35,59 @@ const ScrenMyPost = () => {
             
         }   
     })
+
+  
  
     const handleOpenModal = (e) => {
         if (openModal === e) {
             SetOpenModal(null)
         } else {
             SetOpenModal(e)
+        }
+    }
+
+
+    const handleDelete = async (e) => {
+        const conf = window.confirm("yakin ingin menghapus data ini ??")
+        if (!conf) return;
+        
+        try {
+            const api = await adm.delete(`http://localhost:7777/api/post/delete/${e}`)
+            console.info(api)
+            refetch()
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+
+    const openModalEditBtn = (e) => {
+        if(openModalEdit === e) {
+            setOpenModalEdit(null)
+            setJudul('')
+            setDescription('')
+        } else {
+            const dataEdit = data?.apiGetAll?.find(prev => prev.id === e)
+            setJudul(dataEdit.judul)
+            setDescription(dataEdit.description)
+            setOpenModalEdit(e)
+        }
+    }
+
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        const data = {judul, description}
+         await handleEdit(openModalEdit, data)
+        refetch()
+        setOpenModalEdit(null)
+    }
+
+    const handleEdit = async (e, data) => {
+        try {
+            const api = await adm.put(`http://localhost:7777/api/post/update/${e}`, data)
+            return api
+        } catch (error) {
+            console.error(error)
         }
     }
 
@@ -50,6 +102,11 @@ const ScrenMyPost = () => {
                 tab === "Home" && (
                     <div className='flex gap-5 flex-col items-center' >
                         <h1>Post Screen</h1>
+                            <form onSubmit={handleSubmit} className={`${openModalEdit ? "block" : "hidden"}`} >
+                                <input  value={judul} onChange={(e) => setJudul(e.target.value)} type="text" placeholder='masukan judul edit' id='judul' />
+                                <input value={description} onChange={(e) => setDescription(e.target.value)} type="text" placeholder='masukan description edit' id='description' />
+                                <button type='submit' >submit</button>
+                            </form>
                         <div className='flex flex-col gap-10 h-[760px] w-full overflow-y-auto items-center justify-center ' >
                         {
                             data?.apiGetAll?.map((e) => (
@@ -61,9 +118,9 @@ const ScrenMyPost = () => {
                                         <h1>{new Date(e.createAt).toLocaleDateString()}</h1>
                                     </span>
                                 <AiOutlineBars onClick={() => handleOpenModal(e.id)}  className={`absolute top-3 right-2 ${openModal === e.id ? "hidden" : "block"} `} />
-                                <span onClick={() => SetOpenModal(prev = !prev)} className={`flex flex-col absolute top-3 right-4 bg-white ${openModal === e.id? "block" : 'hidden' } `} >
-                                    <button onClick={() => SetOpenModal(prev => !prev)} className='text-blue-500' >Edit</button>
-                                    <button onClick={() => SetOpenModal(prev => !prev)} className='text-red-500' >Delete</button>
+                                <span onClick={() => SetOpenModal(prev => !prev)} className={`flex flex-col absolute top-3 right-4 bg-white ${openModal === e.id? "block" : 'hidden' } `} >
+                                    <button onClick={() => openModalEditBtn(e.id)} className='text-blue-500' >Edit</button>
+                                    <button onClick={() => handleDelete(e.id)} className='text-red-500' >Delete</button>
                                 </span>
                                     <button onClick={() => SetOpenModal(prev => !prev)} className={`absolute top-0 right-1  text-2xl w-2 h-2 text-red-500 ${openModal === e.id ? "block" : "hidden"}`} >x</button>
                                 </div>

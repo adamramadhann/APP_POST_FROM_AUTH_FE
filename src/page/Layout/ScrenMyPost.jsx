@@ -128,7 +128,11 @@ const ScrenMyPost = () => {
         const data = { judul, description}
         console.info(data)
         handleCreateDataPost(data)
-        refetch()
+        .then(() => {
+            e.target.reset()
+            refetch()
+        })
+       
     }
 
     const handleSerch = (e) => {
@@ -136,9 +140,12 @@ const ScrenMyPost = () => {
     }
 
     useEffect(() => {
-        getDataAllPost()
         setSerch(dataMyPost.filter((post) => post.judul.toLowerCase().includes(query.toLocaleLowerCase())))
-    }, [])
+    }, [query, dataMyPost])
+
+    useEffect(() => {
+        getDataAllPost()
+    },[] )
 
 
 

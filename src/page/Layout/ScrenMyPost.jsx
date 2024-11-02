@@ -7,8 +7,9 @@ import { FaHome } from 'react-icons/fa'
 import { MdPostAdd } from 'react-icons/md'
 import axios from 'axios'
 import adm from '../../axiosApiAuth'
+import { useNavigate } from 'react-router-dom'
 
-const ScrenMyPost = () => {
+const ScrenMyPost = ({onLogOut}) => {
     const [tab, setTab] = useState("Home")
     const [openModal, setOpenModal] = useState(null)
     const [openModalEdit, setOpenModalEdit] = useState(false)
@@ -17,6 +18,9 @@ const ScrenMyPost = () => {
     const [descruption, setDescruption] = useState('')
     const [query, setQuery] = useState('')
     const [serch, setSerch] = useState([])
+
+
+    const navigate = useNavigate()
 
 
     const buttonTab = [
@@ -135,18 +139,26 @@ const ScrenMyPost = () => {
        
     }
 
-    const handleSerch = (e) => {
-        setQuery(e.target.value)
+
+    const handleLogOut = () => {
+        const conf = window.confirm("yakin ingin hapus data ini ??")
+
+        if(!conf) return conf 
+        navigate('/')
+        sessionStorage.removeItem('token')
+        onLogOut()
     }
 
+
+
+
     useEffect(() => {
-        setSerch(dataMyPost.filter((post) => post.judul.toLowerCase().includes(query.toLocaleLowerCase())))
+        setSerch(dataMyPost.filter((prev) => prev.judul.toLowerCase().includes(query.toLocaleLowerCase())))
     }, [query, dataMyPost])
 
     useEffect(() => {
         getDataAllPost()
     },[] )
-
 
 
   return (
@@ -192,9 +204,9 @@ const ScrenMyPost = () => {
                     <div className='flex flex-col  items-center bg-slate-100' >
                         <h1 className='font-bold text-xl my-5 ' >My Postingan App</h1>
                         <form action="">
-                            <input type="search" placeholder='serch Card' value={query} onChange={handleSerch} className='border p-2' />
+                            <input type="search" placeholder='serch Card' value={query} onChange={(e) => setQuery(e.target.value)} className='border p-2' />
                         </form>
-                        <form className={`${openModalEdit ? "block" : "hidden"}`} action="" onSubmit={handleSubmit} >
+                        <form className={`${openModalEdit ? "block" : "hidden"}  `} action="" onSubmit={handleSubmit} >
                             <input value={judul} type="text" onChange={(e) => setJudul(e.target.value) } placeholder='edit postingan' />
                             <input value={descruption} type="text" onChange={(e) => setDescruption(e.target.value) } placeholder='edit description' />
                             <button type='submit'  >Submit</button>
@@ -204,10 +216,10 @@ const ScrenMyPost = () => {
                             serch?.map((e) => (
                                 <div key={e.id} className='  w-[90%] bg-white shadow-xl rounded-md p-5   h-auto  flex flex-col gap-5 relative ' >
                             <h1 className='text-2xl text-gray-500 font-bold' >{e.judul}</h1>
-                            <h1 className='text-gray-500' >Lorem ipsum dolor sit amet consectetur, adipisicing elit. Placeat, quasi?</h1>
+                            <h1 className='text-gray-500' >{e.description}</h1>
                             <span className='w-full flex justify-between items-center' >
-                                <h1>name</h1>
-                                <h1>tanggal</h1>
+                                <h1>{e.author}</h1>
+                                <h1>{new Date(e.createAt).toLocaleDateString()}</h1>
                             </span>
                             <button className={`absolute top-3 right-2`} onClick={() => handelOpenModal(e.id)}  >
                             {openModal === e.id ? <span className='text-red-500 text-xl' >x</span> : <AiOutlineBars /> }
@@ -225,8 +237,10 @@ const ScrenMyPost = () => {
             }
             {
                 tab === "Profile" && (
-                    <div>
-                        ini Profile 
+                    <div className='w-full h-full flex flex-col justify-center gap-5 items-center' >
+                        <img src="public/meditating.png" alt="" />
+                        <h1 className='text-3xl font-bold' >App Maintenance !!</h1>
+                        <button onClick={handleLogOut} className='bg-red-500 p-1 px-6 rounded-sm text-white' >LogOut</button>
                     </div>
                 )
             }

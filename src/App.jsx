@@ -6,6 +6,7 @@ import Register from './page/Auth/Register'
 import TestApiJson from './TestApiJson'
 import getTokenStorage from './GetTokenStorage'
 import ScrenMyPost from './page/Layout/ScrenMyPost'
+import DetailsCard from './page/DetailCard/DetailsCard'
 
 const App = () => {
 
@@ -43,8 +44,8 @@ const App = () => {
   return (
     <Routes>
       <Route path='/' element={<ScrenMyPost/>} />
-      <Route path='/layout' element={<ScrenMyPost/>} >
-      </Route>
+      <Route path='/layout' element={<ScrenMyPost onLogOut={() => setIsLogin(false)} />} />
+        <Route path='/details/:id' element={<DetailsCard/>} />
     </Routes>
   )
 }

@@ -6,6 +6,7 @@ import Register from './page/Auth/Register'
 import TestApiJson from './TestApiJson'
 import getTokenStorage from './GetTokenStorage'
 import ScrenMyPost from './page/Layout/ScrenMyPost'
+import DetailsCard from './page/DetailCard/DetailsCard'
 
 const App = () => {
 
@@ -14,17 +15,13 @@ const App = () => {
 
   const token = getTokenStorage()
 
-  useEffect(() => {
-    if(token) {
-      setIsLogin(true)
-    }
-  }, [token])
-
+  
   useEffect(() => {
     if(token ) {
+      setIsLogin(true)
       navigate('/layout')
     }
-  }, [isLogin, navigate])
+  }, [token, navigate])
 
 
   console.info(token)
@@ -42,9 +39,8 @@ const App = () => {
 
   return (
     <Routes>
-      <Route path='/' element={<ScrenMyPost/>} />
-      <Route path='/layout' element={<ScrenMyPost/>} >
-      </Route>
+      <Route path='/layout' element={<ScrenMyPost/>} />
+      <Route path='/detail/:id' element={<DetailsCard/>} />
     </Routes>
   )
 }

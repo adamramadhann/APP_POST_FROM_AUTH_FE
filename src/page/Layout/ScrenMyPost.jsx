@@ -7,6 +7,7 @@ import { FaHome } from 'react-icons/fa'
 import { MdPostAdd } from 'react-icons/md'
 import axios from 'axios'
 import adm from '../../axiosApiAuth'
+import { Link } from 'react-router-dom'
 
 const ScrenMyPost = () => {
     const [tab, setTab] = useState("Home")
@@ -180,6 +181,7 @@ const ScrenMyPost = () => {
                                         <h1>{e.author}</h1>
                                         <h1>{new Date(e.createAt).toLocaleDateString()}</h1>
                                     </span>
+                                    <Link to={`/detail/${e.id}`} >Details</Link>
                                 </div>
                             ))
                         }
